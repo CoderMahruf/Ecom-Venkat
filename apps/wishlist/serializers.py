@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Wishlist,WishlistProduct
 
-class WishlistItemSerializer(serializers.ModelSerializer):
+class WishlistItemSerializer(serializers.ModelSerializer): 
     class Meta:
         model = WishlistProduct
         fields = ['id', 'wishlist', 'product']
