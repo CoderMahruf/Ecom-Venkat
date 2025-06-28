@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
-from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Banner,Category,Product
@@ -54,3 +53,19 @@ class ProductCreateView(APIView):
             "message": "Product creation failed",
             "errors": serializer.errors
         }, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ProductDetailView(APIView):
+    def get(self, request, product_id):
+        try:
+            product = Product.objects.prefetch_related(
+                'images',
+                'variants__color',
+                'variants__size'
+            ).get(pk=product_id)
+        except Product.DoesNotExist:
+            return Response({"error": "Product not found"}, status=status.HTTP_404_NOT_FOUND)
+        product_serializer = ProductSerializer(product)
+        return Response({
+            "product": product_serializer.data,
+        })

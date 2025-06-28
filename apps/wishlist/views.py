@@ -19,7 +19,6 @@ class WishlistView(APIView):
             "data": serializer.data
         }, status=status.HTTP_200_OK)
 
-
 class WishlistCreateView(APIView):
     def post(self, request, *args, **kwargs):
         try:
