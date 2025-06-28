@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import SignupSerializer,SigninSerializer
+from .serializers import SignupSerializer,SigninSerializer,ChangePasswordSerializer
 from .models import UserOtp
 from django.contrib.auth import get_user_model
 import random
@@ -53,6 +53,15 @@ class SignoutView(APIView):
             return Response({"detail": "Logout successful."}, status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
             return Response({"error": "Invalid or expired token."}, status=status.HTTP_400_BAD_REQUEST)
+        
+class ChangePasswordView(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        serializer = ChangePasswordSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"detail": "Password changed successfully."}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
 class RequestForgetPasswordView(APIView):
     def post(self, request):
