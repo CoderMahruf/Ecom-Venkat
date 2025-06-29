@@ -1,4 +1,4 @@
-from rest_framework import status
+from rest_framework import status,generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -13,6 +13,12 @@ from uuid import uuid4
 from django.utils import timezone
 from datetime import timedelta
 User = get_user_model()
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
+# from .utils import activation_token_generator
 # Create your views here.
 
 class SignupView(APIView):
@@ -25,6 +31,41 @@ class SignupView(APIView):
                 "message": "User created successfully",
             }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# # for email verification view
+# class SignupView(generics.CreateAPIView):
+#     serializer_class = SignupSerializer
+#     def create(self, request, *args, **kwargs):
+#         serializer = self.get_serializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         user = serializer.save(is_active=False)
+#         uid = urlsafe_base64_encode(force_bytes(user.pk))
+#         # token = activation_token_generator.make_token(user)
+#         token = default_token_generator.make_token(user)
+#         link = f"http://127.0.0.1:8000/api/activate/{uid}/{token}/"
+#         send_mail(
+#             subject="Activate your account",
+#             message=f"Click to activate your account: {link}",
+#             from_email=settings.EMAIL_HOST_USER,
+#             recipient_list=[user.email],
+#         )
+#         return Response({'message': 'Check your email for the activation link.'}, status=status.HTTP_201_CREATED)
+    
+# class EmailActivateAccountView(APIView):
+#     def get(self, request, uidb64, token):
+#         try:
+#             uid = force_str(urlsafe_base64_decode(uidb64))
+#             user = User.objects.get(pk=uid)
+#         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+#             return Response({'error': 'Invalid activation link.'}, status=status.HTTP_400_BAD_REQUEST)
+#         if user.is_active:
+#             return Response({'message': 'Account already activated.'})
+#         # if activation_token_generator.check_token(user, token):
+#         if default_token_generator.check_token(user, token):
+#             user.is_active = True
+#             user.save()
+#             return Response({'message': 'Account activated successfully!'})
+#         return Response({'error': 'Activation link expired or invalid.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class SigninView(APIView):

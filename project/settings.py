@@ -110,6 +110,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
+# for bd  time
+# TIME_ZONE = 'Asia/Dhaka'
+
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
