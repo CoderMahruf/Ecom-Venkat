@@ -24,6 +24,7 @@ urlpatterns = [
     path('api/',include('apps.authentication.urls')),
     path('api/',include('apps.product.urls')),
     path('api/',include('apps.wishlist.urls')),
+    path('api/',include('apps.cart.urls')),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
